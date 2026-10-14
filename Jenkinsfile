@@ -90,11 +90,11 @@ pipeline {
                         set -eu
 
                         ssh -o StrictHostKeyChecking=no \
-                          ec2-user@3.110.175.65 \
+                          ec2-user@13.203.198.100 \
                           "docker ps --filter name=jenkins-demo-web"
 
                         curl --fail \
-                          http://3.110.175.65:8080/
+                          http://13.203.198.100:8080/
                     '''
                 }
             }
