@@ -89,7 +89,7 @@ stage('Verify Deployment') {
                         set -eu
 
                         ssh -o StrictHostKeyChecking=no \
-                          ec2-user@13.203.76.150 \
+                          jenkins@13.203.76.150 \
                           "docker ps --filter name=jenkins-demo-web"
 
                         curl --fail \
