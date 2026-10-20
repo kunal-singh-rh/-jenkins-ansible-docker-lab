@@ -78,6 +78,25 @@ pipeline {
                 }
             }
         }
+stage('Verify Deployment') {
+            agent {
+                label 'ansible-node'
+            }
+
+            steps {
+                sshagent(credentials: ['sample-ssh-key']) {
+                    sh '''
+                        set -eu
+
+                        ssh -o StrictHostKeyChecking=no \
+                          ubuntu@192.168.1.40 \
+                          "docker ps --filter name=jenkins-demo-web"
+
+                        curl --fail \
+                          http://192.168.1.40:8080/
+                    '''
+                }
+            }
         }
     }
 }
