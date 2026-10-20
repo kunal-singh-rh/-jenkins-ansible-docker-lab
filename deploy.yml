@@ -1,66 +1,24 @@
 ---
-- name: Deploy Docker application
+- name: Deploy application
   hosts: managed
-  become: true
-  gather_facts: false
-
-  vars:
-    container_name: jenkins-demo-web
-    host_port: "8080"
-    container_port: "80"
+  become: yes
 
   tasks:
-    - name: Verify Docker is available on managed host
-      ansible.builtin.command: docker --version
-      changed_when: false
+    - name: Pull Docker image
+      community.docker.docker_image:
+        name: "{{ image_name }}:{{ image_tag }}"
+        source: pull
 
-    - name: Pull the new image from Docker Hub
-      ansible.builtin.command:
-        argv:
-          - docker
-          - pull
-          - "{{ image_name }}:{{ image_tag }}"
+    - name: Remove old container
+      community.docker.docker_container:
+        name: jenkins-demo-web
+        state: absent
 
-    - name: Remove existing application container if present
-      ansible.builtin.command:
-        argv:
-          - docker
-          - rm
-          - -f
-          - "{{ container_name }}"
-      register: remove_container
-      failed_when: >
-        remove_container.rc != 0 and
-        'No such container' not in
-        (remove_container.stderr | default(''))
-      changed_when: remove_container.rc == 0
-
-    - name: Start the new application container
-      ansible.builtin.command:
-        argv:
-          - docker
-          - run
-          - -d
-          - --name
-          - "{{ container_name }}"
-          - --restart
-          - unless-stopped
-          - -p
-          - "{{ host_port }}:{{ container_port }}"
-          - "{{ image_name }}:{{ image_tag }}"
-
-    - name: Verify application container is running
-      ansible.builtin.command:
-        argv:
-          - docker
-          - inspect
-          - --format
-          - "{{ '{{.State.Running}}' }}"
-          - "{{ container_name }}"
-      register: container_status
-      changed_when: false
-      failed_when: container_status.stdout != "true"
-
-    - name: Display deployment result
-      ansible.builtin.debug:
-        msg: "Application deployed successfully on port 8080."
+    - name: Start new container
+      community.docker.docker_container:
+        name: jenkins-demo-web
+        image: "{{ image_name }}:{{ image_tag }}"
+        state: started
+        restart_policy: always
+        published_ports:
+          - "8080:80"
