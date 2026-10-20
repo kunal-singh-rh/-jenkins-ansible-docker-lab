@@ -84,16 +84,16 @@ stage('Verify Deployment') {
             }
 
             steps {
-                sshagent(credentials: ['sample-ssh-key']) {
+                sshagent(credentials: ['managed-host']) {
                     sh '''
                         set -eu
 
                         ssh -o StrictHostKeyChecking=no \
-                          ubuntu@192.168.1.40 \
+                          ec2-user@13.203.76.150 \
                           "docker ps --filter name=jenkins-demo-web"
 
                         curl --fail \
-                          http://192.168.1.40:8080/
+                          http://13.203.76.150:8080/
                     '''
                 }
             }
