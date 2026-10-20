@@ -94,7 +94,7 @@ pipeline {
                           "docker ps --filter name=jenkins-demo-web"
 
                         sudo curl --fail \
-                          http://13.203.198.100:8080/
+                          http://13.203.76.150:8080/
                     '''
                 }
             }
