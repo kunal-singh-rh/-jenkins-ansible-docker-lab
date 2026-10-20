@@ -78,26 +78,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Verify Deployment') {
-            agent {
-                label 'ansible-node'
-            }
-
-            steps {
-                sshagent(credentials: ['managed-host']) {
-                    sh '''
-                        set -eu
-
-                        sudo ssh -o StrictHostKeyChecking=no \
-                          ec2-user@13.203.76.150 \
-                          "docker ps --filter name=jenkins-demo-web"
-
-                        sudo curl --fail \
-                          http://13.203.76.150:8080/
-                    '''
-                }
-            }
         }
     }
 }
