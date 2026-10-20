@@ -85,7 +85,7 @@ pipeline {
             }
 
             steps {
-                sshagent(credentials: ['ssh-managed-host']) {
+                sshagent(credentials: ['managed-host']) {
                     sh '''
                         set -eu
 
