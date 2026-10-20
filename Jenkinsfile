@@ -60,7 +60,7 @@ pipeline {
             steps {
                 checkout scm
 
-                sshagent(credentials: ['ssh-managed-host']) {
+                sshagent(credentials: ['managed-host']) {
                     sh '''
                         set -eu
 
